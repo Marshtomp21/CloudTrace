@@ -1,0 +1,8 @@
+{
+  "pages": ["pages/home/index", "pages/overview/index", "pages/objects/index", "pages/evidence/index"],
+  "window": { "navigationBarTitleText": "云迹先知", "navigationBarBackgroundColor": "#F6F8FC", "navigationBarTextStyle": "black", "backgroundColor": "#F6F8FC", "backgroundTextStyle": "light" },
+  "tabBar": { "color": "#8490A4", "selectedColor": "#145CFF", "backgroundColor": "#FFFFFF", "borderStyle": "white", "list": [
+    { "pagePath": "pages/home/index", "text": "态势" }, { "pagePath": "pages/overview/index", "text": "预测" }, { "pagePath": "pages/objects/index", "text": "区域" }, { "pagePath": "pages/evidence/index", "text": "依据" }
+  ] },
+  "style": "v2", "sitemapLocation": "sitemap.json"
+}

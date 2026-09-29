@@ -1,0 +1,15 @@
+{
+    "description": "云迹先知 CloudTrace 微信小程序",
+    "miniprogramRoot": "./",
+    "projectname": "CloudTrace",
+    "compileType": "miniprogram",
+    "setting": {
+        "urlCheck": false,
+        "es6": true,
+        "postcss": true,
+        "minified": false,
+        "checkSiteMap": false,
+        "minifyWXML": true
+    },
+    "condition": {}
+}

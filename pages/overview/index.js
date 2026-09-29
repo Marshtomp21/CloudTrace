@@ -1,0 +1,2 @@
+const { leads, regions, basis } = require('../../utils/mock')
+Page({ data: { leads, regions, basis, selectedLead: 60 }, onShow() { wx.setNavigationBarTitle({ title: '预测' }); this.setData({ selectedLead: getApp().globalData.selectedLead || 60 }) }, chooseLead(e) { const selectedLead = Number(e.currentTarget.dataset.min); this.setData({ selectedLead }); getApp().globalData.selectedLead = selectedLead }, goEvidence() { wx.switchTab({ url: '/pages/evidence/index' }) } })
