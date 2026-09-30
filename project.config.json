@@ -1,15 +1,42 @@
 {
-    "description": "云迹先知 CloudTrace 微信小程序",
-    "miniprogramRoot": "./",
-    "projectname": "CloudTrace",
-    "compileType": "miniprogram",
-    "setting": {
-        "urlCheck": false,
-        "es6": true,
-        "postcss": true,
-        "minified": false,
-        "checkSiteMap": false,
-        "minifyWXML": true
-    },
-    "condition": {}
+  "description": "云迹先知 CloudTrace 微信小程序",
+  "miniprogramRoot": "./",
+  "projectname": "CloudTrace",
+  "compileType": "miniprogram",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "postcss": true,
+    "minified": false,
+    "checkSiteMap": false,
+    "minifyWXML": true,
+    "compileWorklet": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": true,
+    "enhance": false,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "condition": {},
+  "appid": "wx7bc5250455647a1e",
+  "libVersion": "3.17.4",
+  "simulatorPluginLibVersion": {},
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "editorSetting": {},
+  "isGameTourist": false
 }

@@ -1,14 +1,41 @@
-<view class="container nav-safe home-page">
-  <view class="topbar row"><view><view class="eyebrow">CLOUDTRACE · 云迹先知</view><view class="title">未来一小时<br/><text class="blue">哪里会受影响？</text></view></view><view class="live-pill"><view class="live-dot"></view><text>实时研判</text></view></view>
-  <view class="subtitle intro">融合雷达回波、卫星云图与对象移动趋势，给出区域级强回波影响判断。</view>
-  <view class="scenario-switch card row" bindtap="openScenario"><view><view class="caption">当前工作场景</view><view class="scenario-name">{{selectedScenarioData.label}}</view><view class="scenario-desc">{{selectedScenarioData.desc}}</view></view><text class="switch-arrow">⌄</text></view>
-  <view class="map-card card-dark"><view class="map-head row"><view><text class="map-title">武汉及周边</text><text class="map-meta">雷达 + 卫星 · {{now}} 更新</text></view><text class="tag tag-live">VIL ≥ 32</text></view><view class="weather-map"><view class="map-grid"></view><view class="map-radar radar-a"></view><view class="map-radar radar-b"></view><view class="map-zone zone-red"></view><view class="map-zone zone-orange"></view><view class="map-zone zone-blue"></view><view class="map-label label-red">东湖高新区<br/><text>83%</text></view><view class="map-label label-orange">天河机场<br/><text>68%</text></view><view class="map-label label-blue">汉口核心区<br/><text>42%</text></view><view class="map-compass">N</view></view><view class="map-legend"><view><view class="legend-dot red"></view>重点关注</view><view><view class="legend-dot orange"></view>需关注</view><view><view class="legend-dot blue"></view>观察</view><text>+60 min</text></view></view>
-  <view class="section-title section-gap row"><text>影响区域</text><text class="link" data-url="/pages/objects/index" bindtap="goPage">查看全部 ›</text></view>
-  <view class="region-list"><block wx:for="{{regions}}" wx:key="id"><view class="region-card card"><view class="region-bar {{item.color}}"></view><view class="region-main"><view class="row"><text class="region-name">{{item.name}}</text><text class="region-prob {{item.color}}">{{item.probability}}%</text></view><view class="row region-sub"><text class="tag {{item.color === 'red' ? 'tag-red' : item.color === 'orange' ? 'tag-orange' : 'tag-blue'}}">{{item.level}}</text><text>{{item.time}}</text></view><text class="region-reason">{{item.reason}}</text></view></view></block></view>
-  <view class="section-title section-gap row"><text>判断依据</text><text class="link" data-url="/pages/evidence/index" bindtap="goPage">展开依据 ›</text></view>
-  <view class="basis-preview card"><view class="basis-check">✓</view><view><text class="basis-title">主回波正在增强并向东南移动</text><text class="basis-copy">雷达 + 卫星 + 轨迹三类证据一致，影响区域判断可信度较高。</text></view></view>
-  <view class="time-row"><text>起报 12:10</text><text class="time-line"></text><text>未来 +60 分钟</text></view>
+<view class="chat-page" wx:if="{{vm}}">
+  <view class="chat-header">
+    <view class="row-between chat-meta"><text class="demo-badge">固定合成样本</text><view class="history-trigger" bindtap="openHistory" aria-role="button" aria-label="查看对话记录">对话记录　›</view></view>
+    <view class="context-line" bindtap="goWorkbench" aria-role="button"><view class="context-copy"><text class="context-main">{{vm.sample.area}}</text><text class="context-detail">{{vm.scenario.label}} · +{{vm.selection.leadMin}} 分钟</text></view><text class="context-arrow">›</text></view>
+  </view>
+  <scroll-view class="chat-scroll {{saveWarning ? 'with-save-warning' : ''}} {{isMultiline ? 'with-multiline' : ''}}" scroll-y="true" scroll-into-view="{{scrollTo}}" scroll-with-animation="true">
+    <view wx:if="{{!messages.length}}" class="welcome">
+      <view class="page-kicker">云迹先知 · 样本问答</view>
+      <view class="welcome-title"><view>未来一小时，</view><view>先看哪里？</view></view>
+      <view class="welcome-desc">从当前样本出发，查看区域影响、预测时间与判断依据。</view>
+      <view class="sample-glance" bindtap="goWorkbench" aria-role="button" aria-label="查看当前样本研判">
+        <view class="glance-top"><text>当前关注 · +{{vm.selection.leadMin}} 分钟</text><text>固定样本 {{vm.sample.sampleTime}}</text></view>
+        <view class="glance-main"><view class="glance-copy"><text class="glance-name">{{vm.focusRegion.name}}</text><text class="glance-caption">强回波超阈值可能性</text></view><text class="glance-value">{{vm.focusRegion.probability}}%</text></view>
+        <view class="glance-bottom"><text>{{vm.focusRegion.level}} · {{vm.focusRegion.arrival}}</text><text>查看研判 ›</text></view>
+      </view>
+      <view class="prompt-heading">可以这样问</view>
+      <view class="prompt-list"><block wx:for="{{quickQuestions}}" wx:key="*this"><view class="prompt-row" data-question="{{item}}" bindtap="sendQuick" aria-role="button"><text class="prompt-index">0{{index + 1}}</text><text class="prompt-copy">{{item}}</text><text class="prompt-arrow">›</text></view></block></view>
+      <view class="welcome-note">回答只依据当前固定合成样本，不提供实时预警。</view>
+    </view>
+    <view class="conversation"><block wx:for="{{messages}}" wx:key="id" wx:for-item="msg">
+      <view id="msg-{{msg.id}}" class="message {{msg.role}}">
+        <view class="message-role">{{msg.role === 'user' ? '你' : '云迹先知 · 演示'}}</view>
+        <view class="message-content">
+          <view wx:if="{{msg.title}}" class="answer-title">{{msg.title}}</view>
+          <text class="message-text">{{msg.role === 'user' ? msg.text : msg.body}}</text>
+          <view wx:if="{{msg.facts && msg.facts.length}}" class="answer-facts"><block wx:for="{{msg.facts}}" wx:key="label" wx:for-item="fact"><view class="fact-row"><text class="fact-label">{{fact.label}}</text><text class="fact-value">{{fact.value}}</text></view></block></view>
+          <view wx:if="{{msg.source}}" class="answer-source">{{msg.source}}</view>
+          <view wx:if="{{msg.actions && msg.actions.length}}" class="answer-actions"><block wx:for="{{msg.actions}}" wx:key="label" wx:for-item="action" wx:for-index="actionIndex"><view class="answer-link {{actionIndex === 0 ? 'primary' : ''}}" data-url="{{action.url}}" data-region="{{msg.context.regionId}}" data-lead="{{msg.context.leadMin}}" bindtap="goAction" hover-class="answer-link-pressed" aria-role="button">{{action.label}} <text>›</text></view></block></view>
+        </view>
+      </view>
+    </block></view>
+  </scroll-view>
+  <view class="chat-bottom {{isMultiline ? 'multiline' : ''}}">
+    <view wx:if="{{saveWarning}}" class="save-warning">对话暂未保存到本机；本次打开仍可继续使用。</view>
+    <view class="composer {{isMultiline ? 'multiline' : ''}}" style="height: {{composerHeight}}rpx;">
+      <textarea class="composer-input" value="{{inputText}}" bindinput="onInput" bindlinechange="onInputLineChange" placeholder="询问当前样本" placeholder-style="color:#5C717A;" maxlength="500" auto-height="true" disable-default-padding="true" adjust-position="true" show-confirm-bar="false" />
+    </view>
+    <view class="send-button" bindtap="send" hover-class="{{canSend ? 'send-pressed' : 'none'}}" hover-start-time="0" aria-role="button" aria-label="发送消息" aria-disabled="{{!canSend}}"><view class="send-circle {{canSend ? 'ready' : ''}}" aria-hidden="true"><image class="send-icon" src="{{canSend ? '/assets/send-plane-ready.png' : '/assets/send-plane-idle.png'}}" mode="aspectFit" /></view></view>
+  </view>
 </view>
-<view wx:if="{{showScenario}}" class="sheet-mask" bindtap="closeScenario"><view class="scenario-sheet" catchtap="noop"><view class="sheet-handle"></view><view class="section-title">选择工作场景</view><block wx:for="{{scenarios}}" wx:key="id"><view class="scenario-option {{selectedScenario === item.id ? 'selected' : ''}}" data-id="{{item.id}}" bindtap="chooseScenario"><view class="scenario-icon">{{item.icon}}</view><view><text class="scenario-option-title">{{item.label}}</text><text class="caption">{{item.desc}}</text></view><text wx:if="{{selectedScenario === item.id}}" class="check">✓</text></view></block></view></view>
-
-
+<view wx:if="{{showHistory}}" class="sheet-mask" bindtap="closeHistory"><view class="bottom-sheet history-sheet" catchtap="stopMask"><view class="sheet-handle"></view><view class="row-between"><text class="sheet-title">本机对话记录</text><view class="sheet-close" bindtap="closeHistory" aria-role="button">关闭</view></view><view class="demo-note">记录只保存在当前设备，不会同步到其它设备。</view><view class="primary-button new-chat" bindtap="newChat" aria-role="button">开始新对话</view><block wx:for="{{sessions}}" wx:key="id"><view class="history-row"><view class="history-main" data-id="{{item.id}}" bindtap="selectHistory"><view class="history-title">{{item.title}} <text wx:if="{{item.active}}" class="current-mark">当前</text></view><view class="secondary-text">{{item.updatedLabel}} · {{item.count}} 轮</view></view><button class="history-delete" data-id="{{item.id}}" catchtap="deleteHistory" aria-label="删除对话">删除</button></view></block></view></view>

@@ -1,0 +1,15 @@
+<view wx:if="{{!hidden}}" class="tabbar-space"></view>
+<view wx:if="{{!hidden}}" class="tabbar" aria-label="主导航">
+  <view class="tabbar-track">
+    <view class="tab-indicator {{animateSelection ? 'animated' : ''}}" style="transform: translateX({{selected * 100}}%);"></view>
+    <block wx:for="{{tabs}}" wx:key="path">
+      <view class="tab-item {{selected === index ? 'selected' : ''}}" data-index="{{index}}" bindtap="switchTab" aria-role="button" aria-label="{{item.label}}">
+        <view class="tab-icon-wrap" aria-hidden="true">
+          <image class="tab-icon icon-idle" src="{{item.icon}}" mode="aspectFit" />
+          <image class="tab-icon icon-active" src="{{item.activeIcon}}" mode="aspectFit" />
+        </view>
+        <text class="tab-label">{{item.label}}</text>
+      </view>
+    </block>
+  </view>
+</view>

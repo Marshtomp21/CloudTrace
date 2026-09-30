@@ -1,26 +1,48 @@
-const leads = [
-  { min: 10, probability: 42, level: '低风险' }, { min: 20, probability: 55, level: '低风险' }, { min: 30, probability: 68, level: '需关注' }, { min: 40, probability: 74, level: '需关注' }, { min: 50, probability: 79, level: '需关注' }, { min: 60, probability: 83, level: '重点关注' }
-]
+const sample = {
+  id: 'wuhan-f007-demo',
+  area: '武汉及周边',
+  sampleTime: '12:10',
+  durationMin: 60,
+  label: '固定合成样本',
+  note: '以下概率、回波和区域位置均为合成演示，不能用作实时预警。'
+}
+
+const leads = [10, 20, 30, 40, 50, 60]
+
+// 每个时点的区域概率都显式存放在样本中。页面和演示问答只从这里取数。
+const probabilities = {
+  10: { r1: 42, r2: 20, r3: 9 },
+  20: { r1: 55, r2: 31, r3: 15 },
+  30: { r1: 68, r2: 41, r3: 22 },
+  40: { r1: 74, r2: 51, r3: 29 },
+  50: { r1: 79, r2: 60, r3: 36 },
+  60: { r1: 83, r2: 68, r3: 42 }
+}
+
 const scenarios = [
-  { id: 'weather', label: '气象播报', icon: '☁', desc: '组织天气趋势与影响范围' },
-  { id: 'airport', label: '机场调度', icon: '✈', desc: '关注跑道与进离港窗口' },
-  { id: 'city', label: '城市防汛', icon: '⌁', desc: '提前安排积水点巡查' },
-  { id: 'event', label: '活动园区', icon: '◇', desc: '评估人群与设施风险' }
+  { id: 'weather', label: '气象播报', desc: '先看全域变化与重点区域', focusRegionIds: ['r1', 'r2', 'r3'], advice: '先概括东湖高新区的较高概率，再说明机场与汉口的变化。' },
+  { id: 'airport', label: '机场调度', desc: '优先查看天河机场窗口', focusRegionIds: ['r2'], advice: '优先核对天河机场的影响窗口，并结合人工值守安排调度。' },
+  { id: 'city', label: '城市防汛', desc: '关注东湖与汉口区域', focusRegionIds: ['r1', 'r3'], advice: '优先核对东湖高新区和汉口核心区的变化；积水判断仍需地面信息。' },
+  { id: 'event', label: '活动园区', desc: '围绕所选样本区域查看', focusRegionIds: [], advice: '先选定活动所在的样本区域，再核对户外作业与人员活动窗口。' }
 ]
+
 const regions = [
-  { id: 'r1', name: '东湖高新区', level: '重点关注', probability: 83, time: '约 35 分钟后', color: 'red', reason: '主回波移动方向与区域重叠' },
-  { id: 'r2', name: '武汉天河机场', level: '需关注', probability: 68, time: '约 48 分钟后', color: 'orange', reason: '北侧单体新生，向东南移动' },
-  { id: 'r3', name: '汉口核心区', level: '观察', probability: 42, time: '约 55 分钟后', color: 'blue', reason: '外围概率带接近，强度仍有限' }
+  { id: 'r1', name: '东湖高新区', shortName: '东湖高新区', arrival: '约 35 分钟后', reason: '主回波移动方向与区域重叠', objectIds: ['F007-O001'] },
+  { id: 'r2', name: '武汉天河机场', shortName: '天河机场', arrival: '约 48 分钟后', reason: '北侧单体新生并向东南移动', objectIds: ['F007-O002'] },
+  { id: 'r3', name: '汉口核心区', shortName: '汉口核心区', arrival: '约 55 分钟后', reason: '外围概率带接近，强度仍有限', objectIds: ['F007-O003'] }
 ]
+
 const objects = [
-  { id: 'F007-O001', label: '主回波', kind: '增强', area: 184, meanVil: 38.2, maxVil: 51.4, confidence: 96, center: '32.6, 28.1', movement: '东南方向 24 km/h' },
-  { id: 'F007-O002', label: '北侧单体', kind: '新生', area: 76, meanVil: 34.6, maxVil: 43.8, confidence: 88, center: '18.2, 11.7', movement: '东南方向 18 km/h' },
-  { id: 'F007-O003', label: '南侧回波', kind: '减弱', area: 51, meanVil: 29.4, maxVil: 36.1, confidence: 82, center: '45.8, 49.3', movement: '东移 12 km/h' }
+  { id: 'F007-O001', label: '主回波', kind: '增强', regionId: 'r1', area: 184, meanVil: 38.2, maxVil: 51.4, movement: '东南方向 24 km/h' },
+  { id: 'F007-O002', label: '北侧单体', kind: '新生', regionId: 'r2', area: 76, meanVil: 34.6, maxVil: 43.8, movement: '东南方向 18 km/h' },
+  { id: 'F007-O003', label: '南侧回波', kind: '减弱', regionId: 'r3', area: 51, meanVil: 29.4, maxVil: 36.1, movement: '东移 12 km/h' }
 ]
+
 const basis = [
-  { title: '雷达回波', value: '主回波增强', detail: '过去 10 分钟最大 VIL 由 44.8 升至 51.4', icon: 'R' },
-  { title: '卫星云图', value: '云顶快速发展', detail: '红外亮温下降，顶部对流继续抬升', icon: 'S' },
-  { title: '移动趋势', value: '向东南移动', detail: '对象质心平均移动速度约 22 km/h', icon: '→' },
-  { title: '历史帧一致性', value: '8 / 8 帧有效', detail: '当前历史窗口无缺测，结论可追溯', icon: '✓' }
+  { id: 'radar', title: '雷达回波', value: '主回波增强', detail: '过去 10 分钟最大 VIL 由 44.8 升至 51.4' },
+  { id: 'satellite', title: '卫星云图', value: '云顶快速发展', detail: '红外亮温下降，顶部对流继续抬升' },
+  { id: 'movement', title: '移动趋势', value: '向东南移动', detail: '对象质心平均移动速度约 22 km/h' },
+  { id: 'history', title: '历史帧一致性', value: '8 / 8 帧有效', detail: '当前样本的历史窗口无缺测' }
 ]
-module.exports = { leads, scenarios, regions, objects, basis }
+
+module.exports = { sample, leads, probabilities, scenarios, regions, objects, basis }

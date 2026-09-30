@@ -1,2 +1,25 @@
-const { leads, regions, basis } = require('../../utils/mock')
-Page({ data: { leads, regions, basis, selectedLead: 60 }, onShow() { wx.setNavigationBarTitle({ title: '预测' }); this.setData({ selectedLead: getApp().globalData.selectedLead || 60 }) }, chooseLead(e) { const selectedLead = Number(e.currentTarget.dataset.min); this.setData({ selectedLead }); getApp().globalData.selectedLead = selectedLead }, goEvidence() { wx.switchTab({ url: '/pages/evidence/index' }) } })
+const { getAnalysis } = require('../../utils/analysis')
+const { readSelection, updateSelection } = require('../../utils/selection')
+
+Page({
+  data: { vm: null },
+
+  onShow() {
+    wx.setNavigationBarTitle({ title: '预测时间轴' })
+    this.refresh()
+  },
+
+  refresh() {
+    this.setData({ vm: getAnalysis(readSelection(getApp())) })
+  },
+
+  chooseLead(e) {
+    updateSelection(getApp(), { leadMin: Number(e.currentTarget.dataset.min) })
+    this.refresh()
+  },
+
+  openRegion(e) {
+    updateSelection(getApp(), { regionId: e.currentTarget.dataset.id })
+    wx.navigateTo({ url: '/pages/objects/index' })
+  }
+})
