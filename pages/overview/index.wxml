@@ -1,1 +1,38 @@
-<view class="container nav-safe overview-page"><view class="eyebrow">FORECAST WINDOW · 01 HOUR</view><view class="title page-title">一小时影响预测</view><view class="subtitle">按时间推进查看各区域进入强回波影响范围的可能性。</view><view class="card forecast-card"><view class="row"><view><view class="caption">{{selectedLead}} 分钟后</view><view class="forecast-number">{{selectedLead >= 60 ? 83 : selectedLead >= 30 ? 68 : 55}}<text>%</text></view><view class="forecast-label">最大区域超阈值概率</view></view><text class="tag tag-red">重点关注</text></view><view class="progress-track"><view class="progress-fill" style="width: {{selectedLead >= 60 ? 83 : selectedLead >= 30 ? 68 : 55}}%"></view></view><view class="row progress-label"><text>当前 12:10</text><text>预计 13:10</text></view></view><view class="section-title section-gap">时间轴</view><scroll-view scroll-x class="lead-scroll" show-scrollbar="false"><view class="lead-list"><block wx:for="{{leads}}" wx:key="min"><view class="lead-pill {{selectedLead === item.min ? 'active' : ''}}" data-min="{{item.min}}" bindtap="chooseLead"><text>+{{item.min}}</text><text class="lead-prob">{{item.probability}}%</text></view></block></view></scroll-view><view class="section-title section-gap row"><text>区域风险排序</text><text class="section-note">按概率降序</text></view><view class="rank-list"><block wx:for="{{regions}}" wx:key="id"><view class="rank-row card"><view class="rank-num">{{index + 1}}</view><view class="rank-copy"><view class="row"><text class="rank-name">{{item.name}}</text><text class="rank-prob">{{item.probability}}%</text></view><view class="rank-track"><view class="rank-fill {{item.color}}" style="width: {{item.probability}}%"></view></view><text class="rank-reason">{{item.time}} · {{item.reason}}</text></view></view></block></view><view class="section-title section-gap">判断依据</view><view class="basis-grid"><block wx:for="{{basis}}" wx:key="title"><view class="card basis-card"><view class="basis-icon">{{item.icon}}</view><text class="basis-title">{{item.title}}</text><text class="basis-value">{{item.value}}</text><text class="basis-detail">{{item.detail}}</text></view></block></view><button class="primary-btn evidence-btn" bindtap="goEvidence">查看完整判断依据</button></view>
+<view class="page-shell forecast-page" wx:if="{{vm}}">
+  <view class="page-kicker">预测详情 · 合成演示</view>
+  <view class="page-heading">预测时间轴</view>
+  <view class="secondary-text page-intro">{{vm.sample.area}} · {{vm.sample.sampleTime}} 固定合成样本</view>
+
+  <view class="forecast-summary">
+    <view class="row-between"><text class="eyebrow">+{{vm.selection.leadMin}} 分钟 · 最高区域</text><text class="status-label {{vm.maxRegion.statusKey}}">{{vm.maxRegion.level}}</text></view>
+    <view class="summary-name">{{vm.maxRegion.name}}</view>
+    <view class="summary-number data-value status-value {{vm.maxRegion.statusKey}}">{{vm.maxRegion.probability}}%</view>
+    <view class="secondary-text">强回波超阈值可能性</view>
+  </view>
+
+  <view class="section-top row-between"><text class="section-heading">选择时间</text><text class="secondary-text">未来 10–60 分钟</text></view>
+  <view class="lead-chart">
+    <view class="lead-chart-caption">各时点最高区域概率 · 固定合成样本</view>
+    <view class="lead-chart-columns">
+      <block wx:for="{{vm.leadViews}}" wx:key="min">
+        <view class="lead-column {{vm.selection.leadMin === item.min ? 'selected' : ''}}" data-min="{{item.min}}" bindtap="chooseLead" aria-role="button" aria-label="{{vm.selection.leadMin === item.min ? '已选，' : ''}}+{{item.min}} 分钟，最高区域概率 {{item.maxProbability}}%">
+          <text class="lead-column-value">{{item.maxProbability}}%</text>
+          <view class="lead-column-track"><view class="lead-column-bar" style="height: {{item.maxProbability}}%"></view></view>
+          <text class="lead-column-time">+{{item.min}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="section-top row-between"><text class="section-heading">区域排序</text><text class="secondary-text">+{{vm.selection.leadMin}} 分钟</text></view>
+  <view class="rank-surface">
+    <block wx:for="{{vm.regions}}" wx:key="id">
+      <view class="rank-row list-row" data-id="{{item.id}}" bindtap="openRegion" aria-role="button">
+        <view class="rank-top row-between"><text class="rank-name">{{index + 1}} · {{item.name}}</text><text class="rank-value status-value {{item.statusKey}}">{{item.probability}}%</text></view>
+        <view class="bar-track"><view class="bar-fill {{item.statusKey}}" style="width: {{item.probability}}%"></view></view>
+        <view class="rank-foot row-between"><text class="secondary-text">{{item.arrival}}</text><text class="status-label {{item.statusKey}}">{{item.level}} ›</text></view>
+      </view>
+    </block>
+  </view>
+
+</view>

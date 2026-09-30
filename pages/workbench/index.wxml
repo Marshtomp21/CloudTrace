@@ -1,0 +1,60 @@
+<view class="page-shell workbench-page" wx:if="{{vm}}">
+  <view class="page-kicker">区域影响 · 合成演示</view>
+  <view class="page-heading">一小时研判</view>
+  <view class="secondary-text top-description">{{vm.sample.area}} · 固定样本 {{vm.sample.sampleTime}}</view>
+
+  <view class="scenario-control row-between" bindtap="openScenarios" aria-role="button" aria-label="选择工作场景">
+    <view class="scenario-copy"><text class="eyebrow">工作场景</text><text class="scenario-name">{{vm.scenario.label}}</text><text class="secondary-text">{{vm.scenario.desc}}</text></view>
+    <text class="scenario-arrow">切换 ›</text>
+  </view>
+
+  <view class="focus-panel surface">
+    <view class="row-between"><text class="focus-eyebrow">当前场景优先查看</text><text class="focus-eyebrow">+{{vm.selection.leadMin}} 分钟</text></view>
+    <view class="focus-name">{{vm.focusRegion.name}}</view>
+    <view class="focus-data row-between">
+      <view><text class="data-value">{{vm.focusRegion.probability}}%</text><text class="focus-caption">强回波超阈值可能性</text></view>
+      <text class="status-label {{vm.focusRegion.statusKey}}">{{vm.focusRegion.level}}</text>
+    </view>
+    <view class="divider"></view>
+    <view class="focus-reason">{{vm.focusRegion.reason}} · {{vm.focusRegion.arrival}}</view>
+    <view class="focus-link" bindtap="openSelectedRegion" aria-role="button">查看该区域 ›</view>
+  </view>
+
+  <view class="section-top row-between"><text class="section-heading">预测时点</text><text class="secondary-text">未来 60 分钟</text></view>
+  <view class="lead-chart">
+    <view class="lead-chart-caption">{{vm.scenarioLeadLabel}} · 固定合成样本</view>
+    <view class="lead-chart-columns">
+      <block wx:for="{{vm.scenarioLeadViews}}" wx:key="min">
+        <view class="lead-column {{vm.selection.leadMin === item.min ? 'selected' : ''}}" data-min="{{item.min}}" bindtap="chooseLead" aria-role="button" aria-label="{{vm.selection.leadMin === item.min ? '已选，' : ''}}+{{item.min}} 分钟，{{vm.scenarioLeadLabel}} {{item.probability}}%">
+          <text class="lead-column-value">{{item.probability}}%</text>
+          <view class="lead-column-track"><view class="lead-column-bar" style="height: {{item.probability}}%"></view></view>
+          <text class="lead-column-time">+{{item.min}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="section-top row-between"><text class="section-heading">区域影响</text><view class="text-link section-action" bindtap="goForecast" aria-role="button">完整预测 ›</view></view>
+  <view class="region-surface">
+    <block wx:for="{{vm.regions}}" wx:key="id">
+      <view class="region-row list-row" data-id="{{item.id}}" bindtap="openRegion" aria-role="button">
+        <view class="region-main"><text class="region-name">{{item.name}}</text><text class="secondary-text">{{item.arrival}} · {{item.reason}}</text></view>
+        <view class="region-right"><text class="region-percent status-value {{item.statusKey}}">{{item.probability}}%</text><text class="status-label {{item.statusKey}}">{{item.level}}</text></view>
+      </view>
+    </block>
+  </view>
+
+</view>
+
+<view wx:if="{{showScenarios}}" class="sheet-mask scenario-sheet-mask" bindtap="closeScenarios">
+  <view class="bottom-sheet scenario-sheet" catchtap="stopMask">
+    <view class="sheet-handle"></view>
+    <view class="row-between"><text class="sheet-title">选择工作场景</text><view class="sheet-close" bindtap="closeScenarios" aria-role="button">关闭</view></view>
+    <block wx:for="{{vm.scenarios}}" wx:key="id">
+      <view class="scenario-option list-row" data-id="{{item.id}}" catchtap="chooseScenario" aria-role="button">
+        <view><text class="scenario-option-name">{{item.label}}</text><text class="secondary-text">{{item.desc}}</text></view>
+        <text class="selected-check">{{vm.selection.scenarioId === item.id ? '✓' : ''}}</text>
+      </view>
+    </block>
+  </view>
+</view>

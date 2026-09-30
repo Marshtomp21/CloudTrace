@@ -1,8 +1,30 @@
 {
-  "pages": ["pages/home/index", "pages/overview/index", "pages/objects/index", "pages/evidence/index"],
-  "window": { "navigationBarTitleText": "云迹先知", "navigationBarBackgroundColor": "#F6F8FC", "navigationBarTextStyle": "black", "backgroundColor": "#F6F8FC", "backgroundTextStyle": "light" },
-  "tabBar": { "color": "#8490A4", "selectedColor": "#145CFF", "backgroundColor": "#FFFFFF", "borderStyle": "white", "list": [
-    { "pagePath": "pages/home/index", "text": "态势" }, { "pagePath": "pages/overview/index", "text": "预测" }, { "pagePath": "pages/objects/index", "text": "区域" }, { "pagePath": "pages/evidence/index", "text": "依据" }
-  ] },
-  "style": "v2", "sitemapLocation": "sitemap.json"
+  "pages": [
+    "pages/home/index",
+    "pages/workbench/index",
+    "pages/evidence/index",
+    "pages/overview/index",
+    "pages/objects/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "云迹先知",
+    "navigationBarBackgroundColor": "#F2F5F5",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F2F5F5",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#5F747C",
+    "selectedColor": "#096B98",
+    "backgroundColor": "#F2F5F5",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/home/index", "text": "对话", "iconPath": "assets/tab-chat.png", "selectedIconPath": "assets/tab-chat-active.png" },
+      { "pagePath": "pages/workbench/index", "text": "研判", "iconPath": "assets/tab-analysis.png", "selectedIconPath": "assets/tab-analysis-active.png" },
+      { "pagePath": "pages/evidence/index", "text": "依据", "iconPath": "assets/tab-evidence.png", "selectedIconPath": "assets/tab-evidence-active.png" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
 }

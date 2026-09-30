@@ -1,0 +1,17 @@
+# Local WeChat developer-tool settings
+/project.private.config.json
+
+# Local agent instructions and review notes
+AGENTS.md
+CLAUDE.md
+CODEX.md
+GEMINI.md
+.cursorrules
+.mcp.json
+.agents/
+.codex/
+.claude/
+.cursor/
+/docs/FRONTEND_WORKFLOW.md
+/docs/PROJECT_TAKEOVER.md
+/docs/VISUAL_IMPLEMENTATION.md

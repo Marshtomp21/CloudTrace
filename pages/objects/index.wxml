@@ -1,1 +1,43 @@
-<view class="container nav-safe objects-page"><view class="eyebrow">IMPACT AREAS · 01 HOUR</view><view class="title page-title">区域影响</view><view class="subtitle">把回波对象转换成可执行的区域判断，帮助调度人员决定先看哪里。</view><view class="card object-map"><view class="map-grid"></view><view class="map-radar radar-main"></view><view class="map-zone zone-red"></view><view class="map-zone zone-orange"></view><view class="map-zone zone-blue"></view><text class="map-label label-red">东湖高新区 83%</text><text class="map-label label-orange">天河机场 68%</text><text class="map-label label-blue">汉口核心区 42%</text></view><view class="section-title section-gap">区域列表</view><view class="region-tabs"><block wx:for="{{regions}}" wx:key="id"><view class="region-tab {{selected.id === item.id ? 'active' : ''}}" data-id="{{item.id}}" bindtap="selectRegion"><text>{{item.name}}</text><text>{{item.probability}}%</text></view></block></view><view class="card detail-card"><view class="row"><view><view class="caption">影响判断</view><view class="detail-title">{{selected.name}}</view></view><text class="tag {{selected.color === 'red' ? 'tag-red' : selected.color === 'orange' ? 'tag-orange' : 'tag-blue'}}">{{selected.level}}</text></view><view class="impact-number">{{selected.probability}}<text>%</text></view><text class="impact-time">{{selected.time}} 进入强回波可能影响窗口</text><view class="divider"></view><view class="reason-title">为什么这样判断</view><view class="reason-line"><view class="reason-dot red"></view><text>{{selected.reason}}</text></view><view class="reason-line"><view class="reason-dot orange"></view><text>主回波最大 VIL 51.4，过去 10 分钟仍在增强</text></view><view class="reason-line"><view class="reason-dot blue"></view><text>对象质心向东南移动，历史 8 帧连续有效</text></view></view><view class="section-title section-gap">相关回波对象</view><view class="object-list"><block wx:for="{{objects}}" wx:key="id"><view class="object-row card"><view class="object-swatch {{item.kind === '增强' ? 'hot' : item.kind === '新生' ? 'new' : 'weak'}}"></view><view class="object-copy"><text class="object-name">{{item.label}}</text><text class="caption">{{item.kind}} · VIL {{item.maxVil}} · {{item.movement}}</text></view><text class="object-confidence">{{item.confidence}}%</text></view></block></view><button class="ghost-btn evidence-btn" bindtap="goEvidence">查看证据链</button></view>
+<view class="page-shell objects-page" wx:if="{{vm}}">
+  <view class="page-kicker">区域详情 · 合成演示</view>
+  <view class="page-heading">区域与回波对象</view>
+  <view class="secondary-text page-intro">{{vm.sample.area}} · +{{vm.selection.leadMin}} 分钟 · 固定合成样本</view>
+
+  <view class="section-top"><text class="section-heading">选择区域</text></view>
+  <scroll-view scroll-x="true" class="region-scroll" show-scrollbar="false">
+    <view class="region-tabs">
+      <block wx:for="{{vm.regions}}" wx:key="id">
+        <view class="region-tab {{vm.selection.regionId === item.id ? 'selected' : ''}}" data-id="{{item.id}}" bindtap="selectRegion" aria-role="button"><text>{{item.shortName}}</text><text class="tab-value">{{item.probability}}%</text></view>
+      </block>
+    </view>
+  </scroll-view>
+
+  <view class="impact-panel">
+    <view class="row-between"><text class="eyebrow">+{{vm.selection.leadMin}} 分钟的影响判断</text><text class="status-label {{vm.selectedRegion.statusKey}}">{{vm.selectedRegion.level}}</text></view>
+    <view class="impact-name">{{vm.selectedRegion.name}}</view>
+    <view class="data-value status-value {{vm.selectedRegion.statusKey}}">{{vm.selectedRegion.probability}}%</view>
+    <view class="secondary-text">强回波超阈值可能性 · 估计{{vm.selectedRegion.arrival}}进入影响窗口</view>
+    <view class="divider panel-divider"></view>
+    <view class="reason-heading">主要原因</view>
+    <view class="body-text reason-copy">{{vm.selectedRegion.reason}}</view>
+  </view>
+
+  <view class="section-top"><text class="section-heading">回波对象</text></view>
+  <view class="object-surface">
+    <block wx:for="{{vm.objects}}" wx:key="id">
+      <view class="object-item list-row">
+        <view class="object-summary" data-id="{{item.id}}" bindtap="toggleObject" aria-role="button" aria-expanded="{{item.expanded}}">
+          <view><text class="object-title">{{item.label}} <text wx:if="{{item.related}}" class="related-mark">与所选区域相关</text></text><text class="secondary-text">{{item.kind}} · {{item.movement}}</text></view>
+          <text class="object-arrow {{item.expanded ? 'expanded' : ''}}">⌄</text>
+        </view>
+        <view class="object-detail-wrap {{item.expanded ? 'expanded' : ''}}" aria-hidden="{{!item.expanded}}">
+          <view class="object-detail">
+            <view class="object-metric"><text>最大 VIL</text><text>{{item.maxVil}}</text></view>
+            <view class="object-metric"><text>平均 VIL</text><text>{{item.meanVil}}</text></view>
+            <view class="object-metric"><text>样本面积</text><text>{{item.area}} km²</text></view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+</view>
